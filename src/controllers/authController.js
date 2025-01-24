@@ -1,16 +1,19 @@
 
-const User = require("../models/UserModel");
+const { User } = require("../models/UserModel");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 async function registerUser(request, response) {
-    // Importing the usernmame and password from the request body
+    // Importing the username and password from the request body
     const { username, password } = request.body;
 
+    console.log(username);
     // Checking to see if the username exists
     const existingUser = await User.findOne({ username });
-    // If username exists, send an error message
+
+    console.log(existingUser);
+    // If the username exists, send an error message
     if (existingUser) {
         return response
         .status(400)
@@ -20,12 +23,12 @@ async function registerUser(request, response) {
     }
 
     // Use bcrypt to hash the password
-    const hashedPassword = await bcrypt.hash(password, 10) // 10 is the salt value
+    const hasedPassword = await bcrypt.hash(password, 10); // 10 is the salt value
 
-    // Create the user using the User Model
-    const user = await User.creat({
+    // Create the user using the User model
+    const user = await User.create({
         username,
-        password: hashedPassword
+        password: hasedPassword 
     });
 
     // Send a response acknowledgement message
@@ -37,14 +40,14 @@ async function registerUser(request, response) {
 }
 
 async function loginUser(request, response) {
-    // Importing the usernmame and password from the request body
+    // Importing the username and password from the request body
     const { username, password } = request.body;
 
     // Check if the user is in the database
     const user = await User.findOne({ username });
 
     // If the user does not exist, send an error message
-    if (!user) {
+    if (!user){
         return response
         .status(400)
         .json({
@@ -52,8 +55,8 @@ async function loginUser(request, response) {
         });
     }
 
-    // Check if the password is valid, compare (password entered by the user, hashed password in the database)
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    // Check if the password is valid, compare(password entered by the user, hashed password in the database)
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
         return response
@@ -64,7 +67,7 @@ async function loginUser(request, response) {
     }
 
     const token = jwt.sign(
-        { userId: user._id }, // Payload data
+        { userId: user._id}, // Payload data
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
     );
@@ -72,10 +75,9 @@ async function loginUser(request, response) {
     response.json(
         { token }
     );
-
 }
 
 module.exports = {
     registerUser,
     loginUser
-}
+};

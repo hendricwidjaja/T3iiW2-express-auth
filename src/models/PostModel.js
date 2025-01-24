@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 const PostSchema = new mongoose.Schema({
@@ -7,7 +8,7 @@ const PostSchema = new mongoose.Schema({
     },
     content: {
         type: String,
-        required: true,
+        required: true
     },
     user: { // Link to the User who creates the post
         type: mongoose.Schema.Types.ObjectId, 
@@ -16,8 +17,8 @@ const PostSchema = new mongoose.Schema({
     }
 });
 
-const PostModel = mongoose.model("Post", PostSchema);
+const Post = mongoose.model("Post", PostSchema);
 
-module.exports = {
-    PostModel
-}
+module.exports  = {
+    Post
+};
